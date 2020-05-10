@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, QueryList, ViewChildren, ViewChild, ElementRef, AfterViewInit, Renderer2, HostListener } from '@angular/core';
+import { Component, OnInit, Input, Output, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { Config } from './_types/config';
 import { EventEmitter } from 'events';
 import { NgSlideDirective } from './slide.component';
@@ -40,13 +40,13 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
   
 
   /** Mouse event bindings */
-  @HostListener('mouseenter') mouseover(event :Event)
+  @HostListener('mouseenter', ['$event']) mouseover(event :Event)
   {
     if (this.config.auto && this.initialized) {
       this.pauseAutoMode()
     }    
   }
-  @HostListener('mouseleave') mouseleave(event: Event)
+  @HostListener('mouseleave', ['$event']) mouseleave(event: Event)
   {
     if (this.config.auto && this.initialized) {
       setTimeout(() => {
@@ -55,10 +55,10 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
     }
   }
 
-  @HostListener('swipeleft') swipeLeft (event: Event) {
+  @HostListener('swipeleft', ['$event']) swipeLeft (event: Event) {
     if (this.config.useSwiping) this.left();
   }
-  @HostListener('swiperight') swipeRight (event: Event) {
+  @HostListener('swiperight', ['$event']) swipeRight (event: Event) {
     if (this.config.useSwiping) this.right();
   }
   
@@ -86,6 +86,7 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
     this.currentSlide = new Subject<number>();
     this.beforeChange = new EventEmitter();
     this.afterChange = new EventEmitter();
+    this.init = new EventEmitter();
     if (this.config.auto != undefined && (this.config.duration == undefined || typeof this.config.duration != "number")) {
       throw new Error("Please define duration for auto-sliding windows")
     }
@@ -101,6 +102,7 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
       }
     })
     this.initialized = true;
+    this.init.emit("NgCarouselInit");
     if (this.config.transitionTime != undefined && typeof this.config.transitionTime == "number") {
       this.carousel.nativeElement.style.transitionDuration = `${this.config.transitionTime}s`      
     }
@@ -120,20 +122,32 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
   }
 
   public setCurrentSlideNumber(num: number) {
-    this.current = num + 1;
+    this.beforeChange.emit('NgCarouselUpdateSlideNumber')
+    this.current = num;
+    this.afterChange.emit('NgCarouselUpdateSlideNumber');
   }
 
   /** 
    * Add and removing slides from the carousel
    */
   public addSlide(slide: NgSlideDirective): void {
+    this.beforeChange.emit('NgCarouselAddSlide');
     this.carousel.nativeElement.appendChild(slide);
     this._slides.push(slide);
+    this.afterChange.emit('NgCarouselAddSlide');
   }
 
   public removeSlide(slide: NgSlideDirective): void {
+    this.beforeChange.emit('NgCarouselRemoveSlide');
     this.carousel.nativeElement.removeChild(this.carousel.nativeElement.childNodes[this._slides.indexOf(slide)]);
     this._slides = this._slides.filter((val) => { val != slide });
+    this.afterChange.emit('NgCarouselRemoveSlide');
+  }
+  
+  public reset() {
+    this.beforeChange.emit('NgCarouselReset')
+    this.resetCarousel();
+    this.afterChange.emit('NgCarouselReset');
   }
 
 
@@ -166,7 +180,7 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
     this.carousel.nativeElement.style.transform = `translateX(-${this.leftTransform}px)`;
     this.current = 0;
   }
-
+  
 
   /**
    * Left and right movements of slides
@@ -174,21 +188,21 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
   private left() {
     if (!this.initialized) return;
     if (this.current == 0) return;
-    this.beforeChange.emit('slideLeft');
+    this.beforeChange.emit('NgCarouselSlideLeft');
     this.leftTransform -= this.carousel.nativeElement.childNodes[this.current - 1].offsetWidth + parseInt(this.carousel.nativeElement.childNodes[this.current - 1].style.marginLeft.split("px")[0]) * 2;
     this.carousel.nativeElement.style.transform = `translateX(-${this.leftTransform}px)`;
     this.current--;
-    this.afterChange.emit('slideLeft');
+    this.afterChange.emit('NgCarouselSlideLeft');
     this.currentSlide.next(this.current);
   }
   private right() {
     if (!this.initialized) return;
     if (this.current == this.carousel.nativeElement.childNodes.length-1) return;
-    this.beforeChange.emit('slideRight');
+    this.beforeChange.emit('NgCarouselSlideRight');
     this.leftTransform += this.carousel.nativeElement.childNodes[this.current + 1].offsetWidth + parseInt(this.carousel.nativeElement.childNodes[this.current + 1].style.marginLeft.split("px")[0]) * 2;
     this.carousel.nativeElement.style.transform = `translateX(-${this.leftTransform}px)`;
     this.current++;
-    this.afterChange.emit('slideRight');
+    this.afterChange.emit('NgCarouselSlideRight');
     this.currentSlide.next(this.current);
   }
 }
