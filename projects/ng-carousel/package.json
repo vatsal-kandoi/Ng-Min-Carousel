@@ -1,9 +1,13 @@
 {
-  "name": "ngx-carousel",
-  "version": "0.0.1",
+  "name": "ng-min-carousel",
+  "version": "0.0.2",
   "peerDependencies": {
     "@angular/common": "^9.0.7",
     "@angular/core": "^9.0.7",
     "tslib": "^1.10.0"
-  }
+  },
+  "description": "A simple and lighweight carousel for Angular projects which provisions only typescript handlers, so the underlying stlying is truly yours.",
+  "keywords": ["min","carousel","angular","slider","image-slider","image gallery"],
+  "author": "Vatsal Kandoi",
+  "license": "MIT" 
 }

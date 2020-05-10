@@ -3,4 +3,5 @@ export interface Config {
     auto?: boolean;
     duration?: number;
     transitionTime?: number;
+    slideToSkip?: number;
 }

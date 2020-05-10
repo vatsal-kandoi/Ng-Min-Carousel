@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { NgCarouselService } from './ng-carousel.service';
+import { NgMinCarouselService } from './ng-min-carousel.service';
 
-describe('NgCarouselService', () => {
-  let service: NgCarouselService;
+describe('NgMinCarouselService', () => {
+  let service: NgMinCarouselService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(NgCarouselService);
+    service = TestBed.inject(NgMinCarouselService);
   });
 
   it('should be created', () => {

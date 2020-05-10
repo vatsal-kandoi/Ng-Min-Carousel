@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Direction } from './_types/direction';
 
 @Injectable()
-export class NgCarouselService {
+export class NgMinCarouselService {
   /** Subject which specifies direction of movement */
   move: any;
 

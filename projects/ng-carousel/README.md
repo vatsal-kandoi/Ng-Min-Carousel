@@ -1,4 +1,4 @@
-# NgCarousel
+# NgMinCarousel
 
 A simple and lighweight carousel for Angular projects which provisions only typescript handlers, so the underlying stlying is truly yours.
 
@@ -6,10 +6,10 @@ A simple and lighweight carousel for Angular projects which provisions only type
 ### Usage ###
 To install the package,
 ```python
-npm i ng-carousel
+npm i ng-min-carousel
 ```
 
-Before initialising a project, add NgCarouselModule to your imports in AppModule.
+Before initialising a project, add NgMinCarouselModule to your imports in AppModule.
 
 ### Documentation ###
 
@@ -19,44 +19,47 @@ Before initialising a project, add NgCarouselModule to your imports in AppModule
 | auto | boolean | Auto sliding of carousel | false |
 | duration | number | Time interval between auto sliding components | required |
 | transitionTime | number | Number of seconds for sliding transition animation | 0.5s |
-| useSwiping | boolean | Implement swiping using HammerJS |
+| useSwiping | boolean | Implement swiping using HammerJS | not enabled |
+| slideToSkip | number | Number of slides to skip through | computed based on width |
+
+Important: Add HammerJS to your project for while enabling the useSwiping option.
 
 #### Methods ####
 Move the carousel to the right
 ```js
-    NgCarouselService.right();
+NgMinCarouselService.right();
 ```
 
 Move the carousel to the left
 ```js
-    NgCarouselService.left();
+NgMinCarouselService.left();
 ```
 
 Adding a new slide to the carousel
 ```js
-    NgCarouselComponent.addSlide(el)
+NgMinCarouselComponent.addSlide(el)
 ```
 el is type of NgSlideDirective
 
 Removing a slide from the carousel
 ```js
-    NgCarouselComponent.removeSlide(el)
+NgMinCarouselComponent.removeSlide(el)
 ```
 
 Seting the slide number
 ```js
-    NgCarouselComponent.setCurrentSlideNumber(number)
+NgMinCarouselComponent.setCurrentSlideNumber(number)
 ```
 where number is the slide number and it starts from 0
 
 Get the current slide number
 ```js
-    NgCarouselComponent.getCurrentSlideNumber()
+NgMinCarouselComponent.getCurrentSlideNumber()
 ```
 
 Resetting the carousel
 ```js
-    NgCarouselComponent.reset()
+NgMinCarouselComponent.reset()
 ```
 
 
@@ -71,14 +74,14 @@ Events that can be binded to
 Event names
 | Event name | Significance |
 | --- | --- |
-| NgCarouselInit | Carousel has been initialised |
-| NgCarouselReset | Reset the carousel |
-| NgCarouselUpdateSlideNumber | Updating the slide number |
-| NgCarouselAddSlide | Adding a new slide to the carousel |
-| NgCarouselRemoveSlide | Removing a slide from the carousel |
+| NgMinCarouselInit | Carousel has been initialised |
+| NgMinCarouselReset | Reset the carousel |
+| NgMinCarouselUpdateSlideNumber | Updating the slide number |
+| NgMinCarouselAddSlide | Adding a new slide to the carousel |
+| NgMinCarouselRemoveSlide | Removing a slide from the carousel |
 
 #### Binding to observable
 Bind to the observable to get the new slide number every time the slide changes
 ```js
-    NgCarouselComponent.currentSlide.subscribe((val) => {})
+NgMinCarouselComponent.currentSlide.subscribe((val) => {})
 ```

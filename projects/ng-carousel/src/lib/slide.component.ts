@@ -1,12 +1,10 @@
-import { Component, ViewChildren, OnInit, Directive, ElementRef, Host, OnDestroy } from '@angular/core';
-import { NgCarouselComponent } from './ng-carousel.component';
+import { OnInit, Directive, ElementRef, Host, OnDestroy } from '@angular/core';
 
 @Directive({
   selector: '[ngSlide]'
 })
 export class NgSlideDirective implements OnInit, OnDestroy {
-  constructor(public el: ElementRef,
-    @Host() private carousel: NgCarouselComponent) {
+  constructor(public el: ElementRef) {
   }
 
   ngOnInit(): void {

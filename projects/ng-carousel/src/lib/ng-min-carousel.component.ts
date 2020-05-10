@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, ViewChild, ElementRef, AfterViewInit,
 import { Config } from './_types/config';
 import { EventEmitter } from 'events';
 import { NgSlideDirective } from './slide.component';
-import { NgCarouselService } from './ng-carousel.service';
+import { NgMinCarouselService } from './ng-min-carousel.service';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -20,6 +20,7 @@ import { Subject } from 'rxjs';
       transition:all 0.5s ease-out;
       -ms-flex-direction: row;
       flex-direction: row;
+      justify-content: flex-start;
     }
     .wrap{
       overflow-x:hidden;
@@ -28,7 +29,7 @@ import { Subject } from 'rxjs';
     `
   ]
 })
-export class NgCarouselComponent implements OnInit,AfterViewInit {
+export class NgMinCarouselComponent implements OnInit,AfterViewInit {
   /** Component bindings */
   @Input('config') config: Config;
   @Output('init') init: EventEmitter;
@@ -80,7 +81,7 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
   public currentSlide: Subject<number>;
 
 
-  constructor(private caroselService: NgCarouselService ) {
+  constructor(private caroselService: NgMinCarouselService ) {
   }
   ngOnInit(): void {
     this.currentSlide = new Subject<number>();
@@ -102,7 +103,7 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
       }
     })
     this.initialized = true;
-    this.init.emit("NgCarouselInit");
+    this.init.emit("NgMinCarouselInit");
     if (this.config.transitionTime != undefined && typeof this.config.transitionTime == "number") {
       this.carousel.nativeElement.style.transitionDuration = `${this.config.transitionTime}s`      
     }
@@ -122,34 +123,41 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
   }
 
   public setCurrentSlideNumber(num: number) {
-    this.beforeChange.emit('NgCarouselUpdateSlideNumber')
+    this.beforeChange.emit('NgMinCarouselUpdateSlideNumber')
     this.current = num;
-    this.afterChange.emit('NgCarouselUpdateSlideNumber');
+    this.afterChange.emit('NgMinCarouselUpdateSlideNumber');
   }
 
   /** 
    * Add and removing slides from the carousel
    */
   public addSlide(slide: NgSlideDirective): void {
-    this.beforeChange.emit('NgCarouselAddSlide');
+    this.beforeChange.emit('NgMinCarouselAddSlide');
     this.carousel.nativeElement.appendChild(slide);
     this._slides.push(slide);
-    this.afterChange.emit('NgCarouselAddSlide');
+    this.afterChange.emit('NgMinCarouselAddSlide');
   }
 
   public removeSlide(slide: NgSlideDirective): void {
-    this.beforeChange.emit('NgCarouselRemoveSlide');
+    this.beforeChange.emit('NgMinCarouselRemoveSlide');
     this.carousel.nativeElement.removeChild(this.carousel.nativeElement.childNodes[this._slides.indexOf(slide)]);
     this._slides = this._slides.filter((val) => { val != slide });
-    this.afterChange.emit('NgCarouselRemoveSlide');
+    this.afterChange.emit('NgMinCarouselRemoveSlide');
   }
   
   public reset() {
-    this.beforeChange.emit('NgCarouselReset')
+    this.beforeChange.emit('NgMinCarouselReset')
     this.resetCarousel();
-    this.afterChange.emit('NgCarouselReset');
+    this.afterChange.emit('NgMinCarouselReset');
   }
 
+  public updateSlideToSkip(num: number) {
+    if (this.config != undefined) {
+      if (this.config.slideToSkip != undefined) {
+        this.config.slideToSkip = num;
+      }  
+    }
+  }
 
   /** 
    * Private functions
@@ -188,21 +196,28 @@ export class NgCarouselComponent implements OnInit,AfterViewInit {
   private left() {
     if (!this.initialized) return;
     if (this.current == 0) return;
-    this.beforeChange.emit('NgCarouselSlideLeft');
-    this.leftTransform -= this.carousel.nativeElement.childNodes[this.current - 1].offsetWidth + parseInt(this.carousel.nativeElement.childNodes[this.current - 1].style.marginLeft.split("px")[0]) * 2;
+    this.beforeChange.emit('NgMinCarouselSlideLeft');
+    console.log(this.current)
+    for (let i = 1; i<=(this.config.slideToSkip || 1) && this.current-1>=0; i++) {
+      this.leftTransform -= this.carousel.nativeElement.childNodes[this.current - 1].offsetWidth + parseInt(this.carousel.nativeElement.childNodes[this.current - 1].style.marginLeft.split("px")[0]) * 2;
+      this.current--;
+    }
     this.carousel.nativeElement.style.transform = `translateX(-${this.leftTransform}px)`;
-    this.current--;
-    this.afterChange.emit('NgCarouselSlideLeft');
+    this.afterChange.emit('NgMinCarouselSlideLeft');
     this.currentSlide.next(this.current);
   }
   private right() {
     if (!this.initialized) return;
     if (this.current == this.carousel.nativeElement.childNodes.length-1) return;
-    this.beforeChange.emit('NgCarouselSlideRight');
-    this.leftTransform += this.carousel.nativeElement.childNodes[this.current + 1].offsetWidth + parseInt(this.carousel.nativeElement.childNodes[this.current + 1].style.marginLeft.split("px")[0]) * 2;
+    this.beforeChange.emit('NgMinCarouselSlideRight');
+    console.log(this.current)
+
+    for (let i = 1; i<=(this.config.slideToSkip || 1) && this.current+1<this.carousel.nativeElement.childNodes.length; i++) {
+      this.leftTransform += this.carousel.nativeElement.childNodes[this.current + 1].offsetWidth + parseInt(this.carousel.nativeElement.childNodes[this.current + 1].style.marginLeft.split("px")[0]) * 2;
+      this.current++;
+    }
     this.carousel.nativeElement.style.transform = `translateX(-${this.leftTransform}px)`;
-    this.current++;
-    this.afterChange.emit('NgCarouselSlideRight');
+    this.afterChange.emit('NgMinCarouselSlideRight');
     this.currentSlide.next(this.current);
   }
 }
