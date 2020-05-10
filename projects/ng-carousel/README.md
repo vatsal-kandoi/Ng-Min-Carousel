@@ -62,6 +62,10 @@ Resetting the carousel
 NgMinCarouselComponent.reset()
 ```
 
+Updating the slides to skip config variable
+```js
+NgMinCarouselComponent.updateSlideToSkip(number)
+```
 
 #### Binding to events
 Events that can be binded to
