@@ -5,3 +5,4 @@
 export * from './lib/ng-min-carousel.service';
 export * from './lib/ng-min-carousel.component';
 export * from './lib/ng-min-carousel.module';
+export * from './lib/slide.component';
