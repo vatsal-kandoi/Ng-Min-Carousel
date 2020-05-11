@@ -11,6 +11,21 @@ npm i ng-min-carousel
 
 Before initialising a project, add NgMinCarouselModule to your imports in AppModule.
 
+Adding to your template
+```html
+<ng-carousel [config]="config" 
+    (init)="subscribeInitEvent()"
+    (beforeChange)="subscribeBeforeChangeEvent()" 
+    (afterChange)="subscribeAfterChangeEvent()">
+<div ngSlide ></div>
+<div ngSlide ></div>
+<div ngSlide ></div>
+<div ngSlide ></div>
+<div ngSlide ></div>
+</ng-carousel>
+```
+Add ngSlide to all divs you want to include in the carousel
+
 ### Documentation ###
 
 #### Config Options ####
