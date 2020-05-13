@@ -17,11 +17,11 @@ Adding to your template
     (init)="subscribeInitEvent()"
     (beforeChange)="subscribeBeforeChangeEvent()" 
     (afterChange)="subscribeAfterChangeEvent()">
-<div ngSlide ></div>
-<div ngSlide ></div>
-<div ngSlide ></div>
-<div ngSlide ></div>
-<div ngSlide ></div>
+<ng-slide></ng-slide>
+<ng-slide></ng-slide>
+<ng-slide></ng-slide>
+<ng-slide></ng-slide>
+<ng-slide></ng-slide>
 </ng-carousel>
 ```
 Add ngSlide to all divs you want to include in the carousel

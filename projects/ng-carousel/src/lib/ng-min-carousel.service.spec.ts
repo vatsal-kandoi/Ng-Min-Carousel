@@ -6,11 +6,20 @@ describe('NgMinCarouselService', () => {
   let service: NgMinCarouselService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [NgMinCarouselService]
+    });
     service = TestBed.inject(NgMinCarouselService);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+  
+  it('should return an observable', () => {
+    service.moveStatus.subscribe((val) => {
+      expect(val).toBeDefined();
+      expect(typeof val.direction).toEqual('string');
+    })
+  })
 });

@@ -10,7 +10,7 @@ import { Subject } from 'rxjs';
   template: `
     <div class="wrap">
       <div #carousel class="carousel-enc"> 
-        <ng-content select="[ngSlide]"></ng-content>
+        <ng-content select=".ngSlide"></ng-content>
       </div>
     </div>
   `,
@@ -82,6 +82,9 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
 
 
   constructor(private caroselService: NgMinCarouselService ) {
+    if (this.config == undefined) {
+      this.config = {}
+    }
   }
   ngOnInit(): void {
     this.currentSlide = new Subject<number>();
@@ -110,7 +113,9 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
     if (this.config.auto == true) {
       this.setAutoMode();
     }
-    this._slides = this.carousel.nativeElement.childNodes;
+    this.carousel.nativeElement.childNodes.forEach(element => {
+      this._slides.push(element)  
+    });
   }
 
   
@@ -118,6 +123,11 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
   /**
    * Get and set slide number
    */
+  
+  public getSlides(): NgSlideDirective[] {
+    return this._slides;
+  }
+
   public getCurrentSlideNumber(): number {
     return this.current;
   }
@@ -197,8 +207,7 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
     if (!this.initialized) return;
     if (this.current == 0) return;
     this.beforeChange.emit('NgMinCarouselSlideLeft');
-    console.log(this.current)
-    for (let i = 1; i<=(this.config.slideToSkip || 1) && this.current-1>=0; i++) {
+    for (let i = 0; i<=(this.config.slideToSkip || 1) && this.current-1>=0; i++) {
       this.leftTransform -= this.carousel.nativeElement.childNodes[this.current - 1].offsetWidth + parseInt(this.carousel.nativeElement.childNodes[this.current - 1].style.marginLeft.split("px")[0]) * 2;
       this.current--;
     }
@@ -210,8 +219,6 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
     if (!this.initialized) return;
     if (this.current == this.carousel.nativeElement.childNodes.length-1) return;
     this.beforeChange.emit('NgMinCarouselSlideRight');
-    console.log(this.current)
-
     for (let i = 1; i<=(this.config.slideToSkip || 1) && this.current+1<this.carousel.nativeElement.childNodes.length; i++) {
       this.leftTransform += this.carousel.nativeElement.childNodes[this.current + 1].offsetWidth + parseInt(this.carousel.nativeElement.childNodes[this.current + 1].style.marginLeft.split("px")[0]) * 2;
       this.current++;
