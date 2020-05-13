@@ -23,8 +23,13 @@ describe('NgMinCarouselComponent', () => {
     service = fixture.componentRef.injector.get<NgMinCarouselService>(NgMinCarouselService as Type<NgMinCarouselService>);
     renderer2 = fixture.componentRef.injector.get<Renderer2>(Renderer2 as Type<Renderer2>);
     fixture.detectChanges();
+    jasmine.clock().uninstall();
+    jasmine.clock().install();
   });
 
+  afterEach(() => {
+    jasmine.clock().uninstall();
+  })
   it('should create', () => {
     expect(component).toBeTruthy();
     expect(service).toBeTruthy();
@@ -45,33 +50,74 @@ describe('NgMinCarouselComponent', () => {
   })
 
   it('should change the current slide number', () => {
-    let slide = renderer2.createElement('ng-slide');
-    component.addSlide(slide);
-    component.addSlide(slide);
-    component.addSlide(slide);
+    let slide1 = renderer2.createElement('ng-slide');
+    let slide2 = renderer2.createElement('ng-slide');
+    let slide3 = renderer2.createElement('ng-slide');
+    component.addSlide(slide1);
+    component.addSlide(slide2);
+    component.addSlide(slide3);
     let current = component.getCurrentSlideNumber();
     component.setCurrentSlideNumber(current + 1);
     expect(component.getCurrentSlideNumber()).toBe(current+1)
   })
 
   it('should move the carousel right', () => {
-    let slide = renderer2.createElement('ng-slide');
-    component.addSlide(slide);
-    component.addSlide(slide);
-    component.addSlide(slide);
-    console.log(component.getSlides().length)
-    component.setCurrentSlideNumber(0)
+    let slide1 = renderer2.createElement('ng-slide');
+    let slide2 = renderer2.createElement('ng-slide');
+    let slide3 = renderer2.createElement('ng-slide');
+    component.addSlide(slide1);
+    component.addSlide(slide2);
+    component.addSlide(slide3);
     service.right();
     expect(component.getCurrentSlideNumber()).toBe(1);
   });
 
   it('should move the carousel left', () => {
-    let slide = renderer2.createElement('ng-slide');
-    component.addSlide(slide);
-    component.addSlide(slide);
-    component.addSlide(slide);
+    let slide1 = renderer2.createElement('ng-slide');
+    let slide2 = renderer2.createElement('ng-slide');
+    let slide3 = renderer2.createElement('ng-slide');
+    component.addSlide(slide1);
+    component.addSlide(slide2);
+    component.addSlide(slide3);
     component.setCurrentSlideNumber(1);
     service.left();
     expect(component.getCurrentSlideNumber()).toBe(0);
   });
+
+  it('should test the auto carousel feature', () => {
+    let slide1 = renderer2.createElement('ng-slide');
+    let slide2 = renderer2.createElement('ng-slide');
+    let slide3 = renderer2.createElement('ng-slide');
+    component.addSlide(slide1);
+    component.addSlide(slide2);
+    component.addSlide(slide3);
+    component.setCurrentSlideNumber(0);
+    component.config.auto = true;
+    component.config.duration = 1000;
+    component.setAutoMode();
+    jasmine.clock().tick(1100);
+    expect(component.getCurrentSlideNumber()).toBe(1);
+    component.pauseAutoMode();
+  });
+
+  it('should reset the carousel', () => {
+    let slide1 = renderer2.createElement('ng-slide');
+    let slide2 = renderer2.createElement('ng-slide');
+    let slide3 = renderer2.createElement('ng-slide');
+    component.addSlide(slide1);
+    component.addSlide(slide2);
+    component.addSlide(slide3);
+    component.setCurrentSlideNumber(0);
+    service.right();
+    service.right();
+    component.reset();
+    expect(component.getCurrentSlideNumber()).toBe(0);
+  })
+
+  it('should update the number of slides to skip', () => {
+    let num = component.config.slideToSkip;
+    component.updateSlideToSkip(5);
+    expect(component.config.slideToSkip == num).toBeFalse();
+  });
+
 });

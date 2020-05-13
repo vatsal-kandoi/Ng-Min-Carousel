@@ -66,7 +66,7 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
 
 
   /** Interval for autoScroll */
-  private autoCarousel: any;  
+  public autoCarousel: any;  
 
   private _slides: NgSlideDirective[] = [];
 
@@ -162,11 +162,10 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
   }
 
   public updateSlideToSkip(num: number) {
-    if (this.config != undefined) {
-      if (this.config.slideToSkip != undefined) {
-        this.config.slideToSkip = num;
-      }  
+    if (this.config == undefined) {
+      this.config = {}
     }
+    this.config.slideToSkip = num;  
   }
 
   /** 
@@ -176,7 +175,7 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
   /**
    * Initialising autoscroll and pausing it
    */
-  private setAutoMode() {
+  public setAutoMode() {
     this.autoCarousel = setInterval(() => {
       if (this.current == this.carousel.nativeElement.childNodes.length-1) {
         this.resetCarousel();
@@ -185,7 +184,7 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
       }
     }, this.config.duration);
   }
-  private pauseAutoMode() {
+  public pauseAutoMode() {
     clearInterval(this.autoCarousel);
   }
 
@@ -216,7 +215,7 @@ export class NgMinCarouselComponent implements OnInit,AfterViewInit {
     this.currentSlide.next(this.current);
   }
   private right() {
-    if (!this.initialized) return;
+    if (!this.initialized) return;;
     if (this.current == this.carousel.nativeElement.childNodes.length-1) return;
     this.beforeChange.emit('NgMinCarouselSlideRight');
     for (let i = 1; i<=(this.config.slideToSkip || 1) && this.current+1<this.carousel.nativeElement.childNodes.length; i++) {
